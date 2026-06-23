@@ -19,7 +19,7 @@ export PS1=$'\n'"%F{green} %*%F %3~ %F{white}"$'\n'"$ "
 plugins=(git brew history kubectl history-substring-search)
 
 # Custom $PATH with extra locations.
-export PATH=/opt/homebrew/bin:$HOME/Library/Python/3.12/bin:/usr/local/bin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin:$HOME/go/bin:/usr/local/git/bin:$HOME/.composer/vendor/bin:$PATH
+export PATH=/opt/homebrew/bin:$HOME/Library/Python/3.12/bin:/usr/local/bin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin:$HOME/go/bin:/usr/local/git/bin:$HOME/.composer/vendor/bin:$HOME/.cargo/bin:$PATH
 
 # Bash-style time output.
 export TIMEFMT=$'\nreal\t%*E\nuser\t%*U\nsys\t%*S'
@@ -58,7 +58,7 @@ autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*'
 
 # Git upstream branch syncer.
-# Usage: gsync master (checks out master, pull upstream, push origin).
+# Usage: gsync master (checks out main, pull upstream, push origin).
 function gsync() {
  if [[ ! "$1" ]] ; then
      echo "You must supply a branch."
@@ -126,3 +126,15 @@ export COMPOSER_MEMORY_LIMIT=-1
 #}
 #shopt -s extdebug
 #trap prod_command_trap DEBUG
+
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+eval "$(/opt/homebrew/bin/mise activate zsh)"
+
+# pnpm is managed by mise now
+export PNPM_HOME="/Users/basti/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
