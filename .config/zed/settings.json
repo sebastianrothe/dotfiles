@@ -1,0 +1,116 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "use_on_type_format": true,
+  "ensure_final_newline_on_save": false,
+  "remove_trailing_whitespace_on_save": false,
+  "format_on_save": "off",
+  "proxy": "",
+  "edit_predictions": {
+    "allow_data_collection": "no"
+  },
+  "agent_servers": {
+    "gemini": {
+      "type": "registry"
+    },
+    "codex-acp": {
+      "type": "registry"
+    },
+    "claude-acp": {
+      "type": "registry"
+    },
+    "glm-acp-agent": {
+      "type": "registry"
+    },
+    "cursor": {
+      "type": "registry"
+    }
+  },
+  "cli_default_open_behavior": "new_window",
+  "project_panel": {
+    "dock": "left"
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "agent": {
+    "default_profile": "ask",
+    "default_model": {
+      "provider": "openai-subscribed",
+      "model": "gpt-5.5",
+      "enable_thinking": true,
+      "effort": "medium"
+    },
+    "dock": "right",
+    "favorite_models": [
+      {
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-6",
+        "enable_thinking": true,
+        "effort": "high"
+      },
+      {
+        "provider": "openai-subscribed",
+        "model": "gpt-5.4",
+        "enable_thinking": true,
+        "effort": "medium"
+      },
+      {
+        "provider": "openai-subscribed",
+        "model": "gpt-5.5",
+        "enable_thinking": true,
+        "effort": "medium"
+      },
+      {
+        "provider": "anthropic",
+        "model": "claude-fable-5",
+        "enable_thinking": true,
+        "effort": "high"
+      },
+      {
+        "provider": "anthropic",
+        "model": "claude-opus-4-8",
+        "enable_thinking": true,
+        "effort": "high"
+      },
+      {
+        "provider": "anthropic",
+        "model": "claude-opus-4-7",
+        "enable_thinking": true,
+        "effort": "high"
+      }
+    ],
+    "model_parameters": []
+  },
+  "git_panel": {
+    "tree_view": false,
+    "dock": "left"
+  },
+  "prettier": {
+    "allowed": false
+  },
+  "semantic_tokens": "combined",
+  "document_folding_ranges": "on",
+  "autosave": "on_window_change",
+  "redact_private_values": true,
+  "telemetry": {
+    "metrics": false,
+    "diagnostics": false
+  },
+  "ui_font_size": 16,
+  "buffer_font_size": 14.0,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "One Dark"
+  }
+}
