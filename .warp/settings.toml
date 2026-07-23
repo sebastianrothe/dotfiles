@@ -51,7 +51,7 @@ voice_input_toggle_key = "fn"
 voice_input_enabled = false
 
 [accessibility]
-accessibility_verbosity = "verbose"
+accessibility_verbosity = "concise"
 
 [general]
 default_session_mode = "terminal"
@@ -120,7 +120,8 @@ is_settings_sync_enabled = false
 [warpify.ssh]
 enable_ssh_warpification = true
 use_ssh_tmux_wrapper = false
-ssh_tmux_deprecation_notice_pending = true
+ssh_tmux_deprecation_notice_pending = false
+ssh_extension_install_mode = "never_install"
 
 [notifications]
 toast_duration_secs = 8
