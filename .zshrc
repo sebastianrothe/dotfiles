@@ -1,142 +1,191 @@
 #
-# .zshrc
-#
-# @author Jeff Geerling
+# ~/.zshrc
+# Plain zsh, based partly on Jeff Geerling's minimalist configuration.
 #
 
-# Colors.
+#
+# PATH
+#
+
+# Preserve order while removing duplicates.
+typeset -U path PATH
+
+path=(
+  /opt/homebrew/bin
+  /opt/homebrew/sbin
+  /usr/local/bin
+  /usr/local/sbin
+  "$HOME/bin"
+  "$HOME/.local/bin"
+  "$HOME/go/bin"
+  "$HOME/.composer/vendor/bin"
+  "$HOME/.cargo/bin"
+  "$HOME/Library/Python/3.12/bin"
+  $path
+)
+
+#
+# Environment
+#
+
 unset LSCOLORS
 export CLICOLOR=1
 export CLICOLOR_FORCE=1
 
-# Don't require escaping globbing characters in zsh.
+# Unmatched globs remain literal instead of raising an error.
 unsetopt nomatch
 
-# Nicer prompt.
-export PS1=$'\n'"%F{green} %*%F %3~ %F{white}"$'\n'"$ "
-
-# Enable plugins.
-plugins=(git brew history kubectl history-substring-search)
-
-# Custom $PATH with extra locations.
-export PATH=/opt/homebrew/bin:$HOME/Library/Python/3.12/bin:/usr/local/bin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin:$HOME/go/bin:/usr/local/git/bin:$HOME/.composer/vendor/bin:$HOME/.cargo/bin:$PATH
-
-# Bash-style time output.
 export TIMEFMT=$'\nreal\t%*E\nuser\t%*U\nsys\t%*S'
+export HOMEBREW_AUTO_UPDATE_SECS=604800
+export COMPOSER_MEMORY_LIMIT=-1
 
-# Include alias file (if present) containing aliases for ssh, etc.
-if [ -f ~/.aliases ]
-then
-  source ~/.aliases
+#
+# Prompt
+#
+
+PS1=$'\n''%F{green} %*%f %3~'$'\n''$ '
+
+#
+# Local configuration
+#
+
+[[ -r "$HOME/.aliases" ]] && source "$HOME/.aliases"
+
+#
+# Completion
+#
+
+autoload -Uz compinit
+
+zstyle ':completion:*' matcher-list \
+  'm:{a-zA-Z}={A-Za-z}' \
+  'r:|=*' \
+  'l:|=* r:|=*'
+
+compinit
+
+#
+# Runtime management
+#
+
+# mise manages Node, Java, and other language runtimes.
+if (( $+commands[mise] )); then
+  eval "$(mise activate zsh)"
 fi
 
-# Set architecture-specific brew share path.
-arch_name="$(uname -m)"
-if [ "${arch_name}" = "x86_64" ]; then
-    share_path="/usr/local/share"
-elif [ "${arch_name}" = "arm64" ]; then
-    share_path="/opt/homebrew/share"
-else
-    echo "Unknown architecture: ${arch_name}"
+#
+# Interactive tools
+#
+
+# fzf provides Ctrl-T and Alt-C.
+# Disable its Ctrl-R binding because Atuin owns history search.
+if (( $+commands[fzf] )); then
+  FZF_CTRL_R_COMMAND= source <(fzf --zsh)
 fi
 
-# Allow history search via up/down keys.
-source ${share_path}/zsh-history-substring-search/zsh-history-substring-search.zsh
-bindkey "^[[A" history-substring-search-up
-bindkey "^[[B" history-substring-search-down
+# zoxide must come after compinit for completion support.
+if (( $+commands[zoxide] )); then
+  eval "$(zoxide init zsh)"
+fi
 
-# Git aliases.
+# Inline suggestions.
+if [[ -r "${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  source "${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+fi
+
+# Atuin owns Ctrl-R but leaves Up/Down as normal history navigation.
+if (( $+commands[atuin] )); then
+  eval "$(atuin init zsh --disable-up-arrow)"
+fi
+
+#
+# Zellij
+#
+
+# Manual use only; no additional mux layer for every shell.
+if (( $+commands[zellij] )); then
+  alias zj='zellij attach main --create'
+  alias zjp='zellij attach "$(basename "$PWD")" --create'
+fi
+
+#
+# Git aliases
+#
+
 alias gs='git status'
 alias gc='git commit'
 alias gp='git pull --rebase'
 alias gcam='git commit -am'
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
 
-alias dotfiles='git --git-dir=$HOME/Documents/projects/dotfiles/.git --work-tree=$HOME'
+#
+# File and directory aliases
+#
 
-# Completions.
-autoload -Uz compinit && compinit
-# Case insensitive.
-zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*'
+alias tree='tree -a -I .git'
 
-# Git upstream branch syncer.
-# Usage: gsync master (checks out main, pull upstream, push origin).
-function gsync() {
- if [[ ! "$1" ]] ; then
-     echo "You must supply a branch."
-     return 0
- fi
+alias ls='ls -A'
+alias l='ls -lah'
+alias ll='ls -lh'
+alias la='ls -lAh'
+alias lsa='ls -lah'
 
- BRANCHES=$(git branch --list $1)
- if [ ! "$BRANCHES" ] ; then
-    echo "Branch $1 does not exist."
-    return 0
- fi
+alias df='df -h'
+alias du='du -h'
+alias rd='rmdir'
 
- git checkout "$1" && \
- git pull upstream "$1" && \
- git push origin "$1"
+alias -g ...='../..'
+alias -g ....='../../..'
+alias -g .....='../../../..'
+alias -g ......='../../../../..'
+
+alias dotfiles='git -C "$HOME/Documents/projects/dotfiles"'
+
+if (( $+commands[trash] )); then
+  alias rm='trash -F'
+fi
+
+#
+# Functions adapted from Geerling's configuration
+#
+
+gsync() {
+  if (( $# != 1 )); then
+    print -u2 'Usage: gsync <branch>'
+    return 2
+  fi
+
+  local branch=$1
+
+  if ! git show-ref --verify --quiet "refs/heads/$branch"; then
+    print -u2 "Local branch does not exist: $branch"
+    return 1
+  fi
+
+  git switch "$branch" &&
+    git pull upstream "$branch" &&
+    git push origin "$branch"
 }
 
-# Tell homebrew to not autoupdate every single time I run it (just once a week).
-export HOMEBREW_AUTO_UPDATE_SECS=604800
-
-# Super useful Docker container oneshots.
-# Usage: dockrun, or dockrun [centos7|fedora27|debian9|debian8|ubuntu1404|etc.]
-# Run on arm64 if getting errors: `export DOCKER_DEFAULT_PLATFORM=linux/amd64`
 dockrun() {
- docker run -it geerlingguy/docker-"${1:-ubuntu1604}"-ansible /bin/bash
+  local image="geerlingguy/docker-${1:-ubuntu1604}-ansible"
+  docker run --rm -it "$image" /bin/bash
 }
 
-# Enter a running Docker container.
-function denter() {
- if [[ ! "$1" ]] ; then
-     echo "You must supply a container ID or name."
-     return 0
- fi
+denter() {
+  if (( $# != 1 )); then
+    print -u2 'Usage: denter <container>'
+    return 2
+  fi
 
- docker exec -it $1 bash
- return 0
+  docker exec -it "$1" bash
 }
 
-# Delete a given line number in the known_hosts file.
 knownrm() {
- re='^[0-9]+$'
- if ! [[ $1 =~ $re ]] ; then
-   echo "error: line number missing" >&2;
- else
-   sed -i '' "$1d" ~/.ssh/known_hosts
- fi
+  if [[ $1 != <-> ]]; then
+    print -u2 'Usage: knownrm <line-number>'
+    return 2
+  fi
+
+  sed -i '' "${1}d" "$HOME/.ssh/known_hosts"
 }
-
-# Allow Composer to use almost as much RAM as Chrome.
-export COMPOSER_MEMORY_LIMIT=-1
-
-# Ask for confirmation when 'prod' is in a command string.
-#prod_command_trap () {
-#  if [[ $BASH_COMMAND == *prod* ]]
-#  then
-#    read -p "Are you sure you want to run this command on prod [Y/n]? " -n 1 -r
-#    if [[ $REPLY =~ ^[Yy]$ ]]
-#    then
-#      echo -e "\nRunning command \"$BASH_COMMAND\" \n"
-#    else
-#      echo -e "\nCommand was not run.\n"
-#      return 1
-#    fi
-#  fi
-#}
-#shopt -s extdebug
-#trap prod_command_trap DEBUG
-
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-eval "$(/opt/homebrew/bin/mise activate zsh)"
-
-# pnpm is managed by mise now
-export PNPM_HOME="/Users/basti/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME/bin:"*) ;;
-  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
-esac
-# pnpm end
