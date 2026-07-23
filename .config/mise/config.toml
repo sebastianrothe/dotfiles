@@ -1,5 +1,4 @@
 [tools]
 cosign = "latest"
 node = "latest"
-pnpm = "latest"
 slsa-verifier = "latest"
