@@ -38,12 +38,6 @@ export HOMEBREW_AUTO_UPDATE_SECS=604800
 export COMPOSER_MEMORY_LIMIT=-1
 
 #
-# Prompt
-#
-
-PS1=$'\n''%F{green} %*%f %3~'$'\n''$ '
-
-#
 # Local configuration
 #
 
@@ -70,6 +64,73 @@ compinit
 if (( $+commands[mise] )); then
   eval "$(mise activate zsh)"
 fi
+
+#
+# Prompt
+#
+
+setopt prompt_subst
+
+_prompt_git_segment() {
+  git rev-parse --is-inside-work-tree &>/dev/null || return
+
+  local branch
+  branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null \
+    || git rev-parse --short HEAD 2>/dev/null) || return
+
+  local staged=0 dirty=0 untracked=0
+  local line status_char
+  while IFS= read -r line; do
+    [[ -z $line ]] && continue
+    status_char=${line[1,2]}
+    case $status_char in
+      \?\?) (( untracked++ )) ;;
+      ?\ )  (( staged++ )) ;;
+      \ ?)  (( dirty++ )) ;;
+      ??)   (( staged++ )); (( dirty++ )) ;;
+    esac
+  done < <(git status --porcelain=v1 2>/dev/null)
+
+  local stats=""
+  local shortstat insertions deletions
+  shortstat=$(git diff HEAD --shortstat 2>/dev/null)
+  if [[ $shortstat =~ '([0-9]+) insertion' ]]; then
+    insertions=$match[1]
+  fi
+  if [[ $shortstat =~ '([0-9]+) deletion' ]]; then
+    deletions=$match[1]
+  fi
+  [[ -n $insertions ]] && stats+=" %F{green}+${insertions}%f"
+  [[ -n $deletions ]] && stats+=" %F{red}-${deletions}%f"
+
+  local counts=""
+  (( staged )) && counts+=" %F{green}+${staged}%f"
+  (( dirty )) && counts+=" %F{yellow}!${dirty}%f"
+  (( untracked )) && counts+=" %F{blue}?${untracked}%f"
+
+  print -n " %F{magenta}${branch}%f${counts}${stats}"
+}
+
+_prompt_runtime_segment() {
+  (( $+commands[mise] )) || return
+
+  local tool version parts=()
+  while IFS=$' \t' read -r tool version; do
+    [[ -z $tool || -z $version ]] && continue
+    case $tool in
+      node|java) parts+=("${tool} ${version}") ;;
+    esac
+  done < <(command mise current 2>/dev/null)
+
+  (( ${#parts} )) || return
+  print -n " %F{yellow}${parts}%f"
+}
+
+_set_prompt() {
+  PS1=$'\n'"%F{cyan}%3~%f$(_prompt_git_segment)$(_prompt_runtime_segment)"$'\n'"%F{green}$%f "
+}
+
+precmd_functions=(_set_prompt ${precmd_functions:#_set_prompt})
 
 #
 # Interactive tools
