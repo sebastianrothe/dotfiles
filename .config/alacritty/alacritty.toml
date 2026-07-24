@@ -1,0 +1,98 @@
+[general]
+live_config_reload = true
+
+[env]
+TERM = "xterm-256color"
+
+[window]
+padding = { x = 10, y = 10 }
+dynamic_padding = true
+decorations = "Full"
+opacity = 0.95
+blur = true
+option_as_alt = "Both"
+startup_mode = "Windowed"
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[font]
+size = 15.0
+
+[font.normal]
+family = "Hack"
+style = "Regular"
+
+[font.bold]
+family = "Hack"
+style = "Bold"
+
+[font.italic]
+family = "Hack"
+style = "Italic"
+
+[font.bold_italic]
+family = "Hack"
+style = "Bold Italic"
+
+[font.offset]
+x = 0
+y = 1
+
+[colors.primary]
+background = "#1B1B1F"
+foreground = "#D9D9D9"
+
+[colors.cursor]
+text = "#1B1B1F"
+cursor = "#95D886"
+
+[colors.selection]
+text = "#D9D9D9"
+background = "#264F78"
+
+[colors.normal]
+black = "#3C3C44"
+red = "#F66060"
+green = "#65C97A"
+yellow = "#FAB96B"
+blue = "#6090D0"
+magenta = "#9B87DC"
+cyan = "#50C8D8"
+white = "#D0D0D0"
+
+[colors.bright]
+black = "#5C5C66"
+red = "#FF8080"
+green = "#80E090"
+yellow = "#FFC080"
+blue = "#80AAEE"
+magenta = "#B8A0F0"
+cyan = "#70D8E8"
+white = "#F0F0F0"
+
+[cursor]
+unfocused_hollow = true
+
+[cursor.style]
+shape = "Block"
+blinking = "Off"
+
+[selection]
+save_to_clipboard = true
+
+[mouse]
+hide_when_typing = true
+
+[keyboard]
+bindings = [
+  { key = "N", mods = "Command", action = "CreateNewWindow" },
+  { key = "T", mods = "Command", action = "CreateNewWindow" },
+  { key = "W", mods = "Command", action = "Quit" },
+  { key = "Plus", mods = "Command", action = "IncreaseFontSize" },
+  { key = "Minus", mods = "Command", action = "DecreaseFontSize" },
+  { key = "Key0", mods = "Command", action = "ResetFontSize" },
+  { key = "K", mods = "Command", action = "ClearHistory" },
+  { key = "F", mods = "Command", action = "SearchForward" },
+]

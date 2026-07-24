@@ -38,18 +38,19 @@
   }
 
   -- Cursor
-  config.default_cursor_style = 'BlinkingBlock'
-  config.cursor_blink_rate = 500
+  config.default_cursor_style = 'SteadyBlock'
+  config.cursor_blink_rate = 0
 
   -- Window
   config.initial_cols = 120
   config.initial_rows = 28
   config.window_padding = { left = 10, right = 10, top = 10, bottom = 10 }
-  config.window_decorations = 'INTEGRATED_BUTTONS|RESIZE'
+  config.window_decorations = 'TITLE|RESIZE'
   config.window_background_opacity = 0.95
   config.macos_window_background_blur = 20
 
   -- Tabs
+  config.use_fancy_tab_bar = true
   config.hide_tab_bar_if_only_one_tab = true
   config.tab_max_width = 32
 
