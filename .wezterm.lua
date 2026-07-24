@@ -60,5 +60,6 @@
   -- Misc
   config.scrollback_lines = 5000
   config.audible_bell = 'Disabled'
+  config.window_close_confirmation = 'NeverPrompt'
 
   return config
