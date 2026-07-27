@@ -10,7 +10,7 @@ dynamic_padding = true
 decorations = "Full"
 opacity = 0.95
 blur = true
-option_as_alt = "Both"
+option_as_alt = "OnlyRight"
 startup_mode = "Windowed"
 
 [scrolling]
