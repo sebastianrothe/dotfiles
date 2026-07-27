@@ -45,6 +45,7 @@ agent_mode_query_suggestions_enabled = true
 
 [agents.warp_agent.other]
 agent_attribution_enabled = false
+should_render_use_agent_toolbar_for_user_commands = false
 
 [agents.voice]
 voice_input_toggle_key = "fn"
