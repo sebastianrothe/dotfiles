@@ -4,6 +4,11 @@ live_config_reload = true
 [env]
 TERM = "xterm-256color"
 
+#[terminal.shell]
+#program = "/opt/homebrew/bin/zellij"
+#args = ["-l", "welcome"]
+#args = ["attach", "main", "--create"]
+
 [window]
 padding = { x = 10, y = 10 }
 dynamic_padding = true
