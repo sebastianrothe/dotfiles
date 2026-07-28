@@ -37,6 +37,9 @@ export TIMEFMT=$'\nreal\t%*E\nuser\t%*U\nsys\t%*S'
 export HOMEBREW_AUTO_UPDATE_SECS=604800
 export COMPOSER_MEMORY_LIMIT=-1
 
+# Claude CLI
+export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=80
+
 #
 # Local configuration
 #
@@ -165,6 +168,17 @@ fi
 if (( $+commands[zellij] )); then
   alias zj='zellij attach main --create'
   alias zjp='zellij attach "$(basename "$PWD")" --create'
+
+  zproject() {
+    local root parent repo name
+
+    root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+    parent="$(basename "$(dirname "$root")")"
+    repo="$(basename "$root")"
+    name="${parent}-${repo}"
+
+    zellij attach "$name" --create
+  }
 fi
 
 #
