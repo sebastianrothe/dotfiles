@@ -11,7 +11,7 @@
       "WebFetch(domain:nextcloud.com)",
       "Bash(npx vitest:*)"
     ],
-    "defaultMode": "default"
+    "defaultMode": "plan"
   },
   "hooks": {
     "PreToolUse": [
@@ -26,6 +26,10 @@
       }
     ]
   },
+  "worktree": {
+    "baseRef": "head"
+  },
+  "enableWorkflows": true,
   "statusLine": {
     "type": "command",
     "command": "bash $HOME/.claude/statusline-command.sh"
@@ -50,5 +54,9 @@
   },
   "effortLevel": "high",
   "tui": "fullscreen",
-  "agentPushNotifEnabled": true
+  "editorMode": "normal",
+  "preferredNotifChannel": "auto",
+  "autoCompactEnabled": true,
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": false
 }
