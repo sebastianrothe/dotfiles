@@ -141,8 +141,9 @@ precmd_functions=(_set_prompt ${precmd_functions:#_set_prompt})
 
 # fzf provides Ctrl-T and Alt-C.
 # Disable its Ctrl-R binding because Atuin owns history search.
+# Disable its Alt-C binding because Zoxide is present
 if (( $+commands[fzf] )); then
-  FZF_CTRL_R_COMMAND= source <(fzf --zsh)
+  FZF_CTRL_R_COMMAND= FZF_ALT_C_COMMAND= source <(fzf --zsh)
 fi
 
 # zoxide must come after compinit for completion support.
@@ -207,6 +208,7 @@ alias df='df -h'
 alias du='du -h'
 alias rd='rmdir'
 
+setopt auto_cd
 alias -g ...='../..'
 alias -g ....='../../..'
 alias -g .....='../../../..'
@@ -215,7 +217,7 @@ alias -g ......='../../../../..'
 alias dotfiles='git -C "$HOME/Documents/projects/dotfiles"'
 
 if (( $+commands[trash] )); then
-  alias rm='trash -F'
+  alias rm='trash'
 fi
 
 #
