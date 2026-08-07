@@ -1,4 +1,5 @@
 [tools]
+aube = "latest"
 cosign = "latest"
 node = "latest"
 slsa-verifier = "latest"
