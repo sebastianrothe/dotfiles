@@ -218,6 +218,7 @@ alias dotfiles='git -C "$HOME/Documents/projects/dotfiles"'
 
 if (( $+commands[rmtrash] )); then
   alias rm='rmtrash'
+  alias rmr='/bin/rm'
 fi
 
 #
