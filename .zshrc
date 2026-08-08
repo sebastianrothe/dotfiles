@@ -216,8 +216,8 @@ alias -g ......='../../../../..'
 
 alias dotfiles='git -C "$HOME/Documents/projects/dotfiles"'
 
-if (( $+commands[trash] )); then
-  alias rm='trash'
+if (( $+commands[rmtrash] )); then
+  alias rm='rmtrash'
 fi
 
 #
